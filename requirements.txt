@@ -1,0 +1,39 @@
+# --- Core data ---
+yfinance>=0.2.54
+curl_cffi>=0.7.3
+pandas==2.2.3
+numpy==1.26.4
+duckdb==1.1.3
+python-dotenv==1.0.1
+requests==2.32.3
+beautifulsoup4==4.12.3
+lxml==5.3.0
+
+# --- Macro / flow ---
+fredapi==0.5.2
+
+# --- RAG / embeddings ---
+chromadb==0.5.23
+sentence-transformers==3.3.1
+
+# --- Agents / LLM ---
+langgraph==0.2.60
+langchain==0.3.13
+langchain-groq==0.2.2
+groq==0.13.1
+anthropic>=0.40.0
+openai>=1.55.0     # used for Cerebras (OpenAI-compatible API)
+
+# --- API + dashboard ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+streamlit==1.41.1
+plotly==5.24.1
+
+# --- PDF parsing (BSE announcement attachments) ---
+pymupdf>=1.24.0
+
+# --- Utilities ---
+tenacity==9.0.0
+apscheduler==3.11.0
+tqdm==4.67.1

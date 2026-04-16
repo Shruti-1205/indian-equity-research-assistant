@@ -1,0 +1,18 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+.DS_Store
+
+# Keep DuckDB and ChromaDB in the repo so the deployed Streamlit app has data.
+# The daily-refresh GitHub Action commits updated versions of these files.
+# !data/*.duckdb
+# !chroma_db/
+
+# WAL files are transient and should not be versioned.
+data/*.duckdb.wal
+
+# Benchmark progress checkpoints are transient.
+benchmark/progress.json

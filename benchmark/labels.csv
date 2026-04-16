@@ -1,0 +1,106 @@
+symbol,date,pct_1d,sector_ret,nifty_ret,expected_driver,note
+SIEMENS.NS,2026-04-15,6.96,1.63,1.63,company,outperformed sector by 5.3pp on 4.49x volume
+BPCL.NS,2026-04-15,5.97,2.15,1.63,company,outperformed sector by 3.8pp
+DIXON.NS,2026-04-15,5.38,1.63,1.63,company,outperformed by 3.75pp on broad up day
+LICI.NS,2026-04-15,4.79,1.6,1.63,company,bonus share issuance filed 2026-04-13
+HDFCAMC.NS,2026-04-15,4.62,,1.63,unclear,no sector benchmark no material filing
+ICICIGI.NS,2026-04-15,4.25,,1.63,unclear,no sector benchmark no material filing
+INDUSTOWER.NS,2026-04-15,-4.15,1.63,1.63,company,underperformed by 5.8pp on 2.18x volume on broad up day
+POWERGRID.NS,2026-04-15,4.03,2.15,1.63,sector,close to sector return
+JSWENERGY.NS,2026-04-15,3.65,2.15,1.63,sector,within 1.5pp of sector
+HDFCLIFE.NS,2026-04-15,3.45,1.6,1.63,sector,within 1.9pp of sector on broad up day
+HINDALCO.NS,2026-04-15,3.39,1.77,1.63,sector,close to sector move
+TECHM.NS,2026-04-15,3.37,2.84,1.63,sector,matches IT index
+EICHERMOT.NS,2026-04-13,-5.04,-2.09,-0.86,company,VECV March sales mixed with exports down 38.8% and HD bus down 69.4%
+CHOLAFIN.NS,2026-04-13,-4.68,,-0.86,company,large underperformance of Nifty on 1.35x volume
+MARUTI.NS,2026-04-13,-4.62,-2.09,-0.86,company,underperformed auto sector by 2.5pp auto monthly sales filed around April 1
+JSWENERGY.NS,2026-04-13,4.24,0.06,-0.86,company,large positive move on negative market day
+HEROMOTOCO.NS,2026-04-13,-4.02,-2.09,-0.86,company,underperformed auto sector by 1.9pp monthly sales typically filed April 1
+ADANIPOWER.NS,2026-04-13,3.15,0.06,-0.86,company,positive on broad down day
+UNITDSPR.NS,2026-04-13,-2.89,-1.29,-0.86,unclear,modest underperformance no material filing
+BAJFINANCE.NS,2026-04-13,-2.77,,-0.86,company,conference call for quarterly results intimated same day
+TVSMOTOR.NS,2026-04-13,-2.65,-2.09,-0.86,sector,tracks auto sector closely
+RELIANCE.NS,2026-04-13,-2.6,0.06,-0.86,company,Reliance Projects divestment disclosure filed same day
+DABUR.NS,2026-04-13,-2.51,-1.29,-0.86,unclear,modest underperformance no filing
+PIDILITIND.NS,2026-04-13,-2.25,-0.86,-0.86,sector,in line with broader market
+HDFCLIFE.NS,2026-04-13,2.47,,-0.86,unclear,positive on down day but no clear catalyst beyond scheduled board meeting
+SIEMENS.NS,2026-04-10,5.15,1.16,1.16,company,outperformed by 4pp no sector catalyst
+LODHA.NS,2026-04-10,4.69,2.08,1.16,unclear,modest outperformance of realty sector
+COALINDIA.NS,2026-04-10,-4.4,1.11,1.16,company,declined 4.4% on a day energy sector rose 1.1% on 1.95x volume
+BERGEPAINT.NS,2026-04-10,4.37,1.16,1.16,company,outperformed Nifty by 3.2pp on 1.57x volume
+ASIANPAINT.NS,2026-04-10,4.01,1.16,1.16,company,outperformed by 2.85pp on 2.09x volume
+ADANIGREEN.NS,2026-04-10,3.91,1.11,1.16,company,outperformed energy sector by 2.8pp
+EICHERMOT.NS,2026-04-10,3.87,2.85,1.16,sector,matches auto sector
+SUNPHARMA.NS,2026-04-10,-3.62,0.13,1.16,company,declined 3.6% against flat pharma sector and rising Nifty on 2.54x volume
+HEROMOTOCO.NS,2026-04-10,3.45,2.85,1.16,sector,matches auto sector
+ICICIBANK.NS,2026-04-10,3.17,1.99,1.16,sector,matches banking sector
+BAJAJ-AUTO.NS,2026-04-10,3.12,2.85,1.16,sector,matches auto sector
+TVSMOTOR.NS,2026-04-10,3.03,2.85,1.16,sector,matches auto sector
+HINDALCO.NS,2026-04-09,3.56,1.25,-0.93,company,metals sector weakly positive while market down 0.93% stock up 3.56%
+HAL.NS,2026-04-09,3.21,-0.93,-0.93,company,up 3.2% on a down market day
+NAUKRI.NS,2026-04-09,-2.93,-0.93,-0.93,unclear,modest underperformance
+AMBUJACEM.NS,2026-04-09,-2.84,-0.93,-0.93,unclear,modest underperformance
+LT.NS,2026-04-09,-2.74,-0.93,-0.93,unclear,modest underperformance
+JSWENERGY.NS,2026-04-09,-2.57,0.82,-0.93,company,declined 2.57% while energy sector rose 0.82%
+INDUSINDBK.NS,2026-04-09,-2.56,-1.58,-0.93,sector,within 1pp of banking sector
+PFC.NS,2026-04-09,2.49,,-0.93,company,positive 2.5% on a negative market day
+BOSCHLTD.NS,2026-04-09,2.32,-0.39,-0.93,company,preferential issue and acquisition filings same day on 5.47x volume
+HDFCBANK.NS,2026-04-09,-2.25,-1.58,-0.93,sector,close to banking sector
+KOTAKBANK.NS,2026-04-09,-2.17,-1.58,-0.93,sector,close to banking sector
+VEDL.NS,2026-04-09,2.16,1.25,-0.93,sector,tracked metals sector on down market day
+BRITANNIA.NS,2026-04-09,-2.14,-0.13,-0.93,unclear,modest underperformance
+ICICIBANK.NS,2026-04-09,-2.13,-1.58,-0.93,sector,close to banking sector
+SBIN.NS,2026-04-09,-1.93,-1.58,-0.93,sector,close to banking sector
+ADANIGREEN.NS,2026-04-08,11.27,2.5,3.78,company,rose 11.27% against 2.5pp sector and 3.78pp Nifty on 3.39x volume
+CHOLAFIN.NS,2026-04-08,9.84,,3.78,company,outperformed Nifty by 6pp on broad rally day
+ADANIENT.NS,2026-04-08,8.59,3.78,3.78,sector,matched Nifty on broad relief rally (macro folded into sector in 3-class taxonomy)
+LODHA.NS,2026-04-08,8.53,6.75,3.78,sector,matches realty sector
+HDFCAMC.NS,2026-04-08,8.28,,3.78,sector,broad rally day no company catalyst (macro folded into sector)
+EICHERMOT.NS,2026-04-08,7.96,6.69,3.78,sector,matches auto sector on rally day
+LT.NS,2026-04-08,7.59,3.78,3.78,sector,matches Nifty on rally day (macro folded into sector)
+CANBK.NS,2026-04-08,7.47,5.67,3.78,sector,matches banking sector
+BOSCHLTD.NS,2026-04-08,7.45,6.69,3.78,company,preferential issue and acquisition filings same day on 2.98x volume
+BPCL.NS,2026-04-08,7.44,2.5,3.78,company,outperformed energy sector by 5pp on rally day
+DLF.NS,2026-04-08,7.26,6.75,3.78,sector,matches realty sector
+BAJFINANCE.NS,2026-04-08,7.01,,3.78,sector,broad rally day (macro folded into sector)
+BANKBARODA.NS,2026-04-08,6.93,5.67,3.78,sector,matches banking sector
+LICI.NS,2026-04-08,6.79,,3.78,sector,broad rally day (macro folded into sector)
+M&M.NS,2026-04-08,6.77,6.69,3.78,sector,matches auto sector
+WIPRO.NS,2026-04-07,3.77,2.5,0.68,sector,matches IT sector
+VEDL.NS,2026-04-07,3.37,1.55,0.68,unclear,modest outperformance of metals
+LTIM.NS,2026-04-07,3.14,2.5,0.68,sector,matches IT sector
+HINDALCO.NS,2026-04-07,2.92,1.55,0.68,sector,matches metals sector
+HCLTECH.NS,2026-04-07,2.73,2.5,0.68,sector,matches IT sector
+GODREJCP.NS,2026-04-07,2.71,0.82,0.68,company,outperformed FMCG sector by 1.9pp on 2.07x volume
+TCS.NS,2026-04-07,2.66,2.5,0.68,sector,matches IT sector
+INFY.NS,2026-04-07,2.54,2.5,0.68,sector,matches IT sector
+AMBUJACEM.NS,2026-04-07,-2.23,0.68,0.68,company,declined on positive market day
+DMART.NS,2026-04-07,-1.87,0.68,0.68,company,declined on up market day
+PNB.NS,2026-04-07,-1.8,0.2,0.68,unclear,modest underperformance
+TRENT.NS,2026-04-06,7.97,1.12,1.12,company,outperformed Nifty by 6.8pp on 4.14x volume
+ADANIGREEN.NS,2026-04-06,7.61,0.25,1.12,company,outperformed energy sector by 7.4pp on 3.11x volume
+DMART.NS,2026-04-06,4.33,1.12,1.12,company,outperformed Nifty by 3.2pp on 2.26x volume
+NMDC.NS,2026-04-06,4.25,1.11,1.12,company,outperformed metals sector by 3.1pp on 2.08x volume
+BOSCHLTD.NS,2026-04-06,4.12,1.08,1.12,company,outperformed auto sector by 3pp on 2.18x volume
+BANKBARODA.NS,2026-04-06,4.09,2.06,1.12,unclear,modest outperformance of banking sector
+AXISBANK.NS,2026-04-06,3.96,2.06,1.12,unclear,modest outperformance of banking sector
+ADANIENT.NS,2026-04-06,3.71,1.12,1.12,unclear,modest outperformance
+TITAN.NS,2026-04-06,3.63,1.12,1.12,unclear,modest outperformance
+RELIANCE.NS,2026-04-06,-3.39,0.25,1.12,company,declined 3.4% on a positive market day
+LT.NS,2026-04-06,3.17,1.12,1.12,unclear,modest outperformance
+ULTRACEMCO.NS,2026-04-06,3.15,1.12,1.12,unclear,modest outperformance
+TVSMOTOR.NS,2026-04-06,2.84,1.08,1.12,unclear,modest move close to sector
+SRF.NS,2026-04-02,-5.44,0.15,0.15,company,declined 5.44% on a flat market day
+BOSCHLTD.NS,2026-04-02,4.9,-0.62,0.15,company,outperformed auto sector by 5.5pp on 2.93x volume
+LTIM.NS,2026-04-02,4.79,2.6,0.15,unclear,modest outperformance of IT sector
+HCLTECH.NS,2026-04-02,3.53,2.6,0.15,sector,matches IT sector
+DIXON.NS,2026-04-02,-3.25,0.15,0.15,company,declined on flat market day
+TORNTPHARM.NS,2026-04-02,-3.02,-0.92,0.15,unclear,modest underperformance of pharma
+TECHM.NS,2026-04-02,2.63,2.6,0.15,sector,matches IT sector
+EICHERMOT.NS,2026-04-02,-2.58,-0.62,0.15,unclear,modest underperformance of auto
+PIDILITIND.NS,2026-04-02,-2.56,0.15,0.15,company,declined on flat market day
+ASIANPAINT.NS,2026-04-02,-2.55,0.15,0.15,company,declined on flat market day
+DLF.NS,2026-04-02,2.45,1.07,0.15,unclear,modest outperformance
+UNITDSPR.NS,2026-04-02,-2.25,0.21,0.15,company,declined on flat market day
+HEROMOTOCO.NS,2026-04-02,-2.16,-0.62,0.15,unclear,modest underperformance of auto
+DMART.NS,2026-04-02,2.14,0.15,0.15,unclear,modest move on flat day
