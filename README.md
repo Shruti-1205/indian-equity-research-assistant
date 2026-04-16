@@ -241,18 +241,3 @@ These are deliberate tradeoffs, stated honestly.
 - **Some mid cap PDFs** are served by BSE with session cookies that occasionally expire. The PDF cache marks these with status `http_error` and the event agent still works off the headline.
 - **Coverage is Nifty 100** for this portfolio version. Extending to Nifty 200 is a one time script code lookup for the additional 100 companies.
 
-## Roadmap
-
-- [x] Phase 1: price data pipeline
-- [x] Phase 2: BSE announcements plus ChromaDB RAG
-- [x] Phase 2.5: PDF fetcher plus cache
-- [x] Phase 3: FRED macro plus NSE FII/DII
-- [x] Phase 4: LangGraph multi agent pipeline plus validator plus verifier
-- [x] Phase 5: FastAPI plus Streamlit dashboard
-- [x] Phase 6: labeled benchmark plus cost tracking plus model routing
-- [ ] Phase 7: Docker containerisation, GitHub Actions cron, HuggingFace Spaces deploy
-- [ ] Phase 8: extend to Nifty 200
-
-## Tech stack
-
-LangGraph for orchestration. Groq, Cerebras, and optional Anthropic for LLMs. ChromaDB for vector search. DuckDB for analytics storage. yfinance, curl_cffi, pymupdf, fredapi for data ingestion. sentence transformers for local embeddings. Streamlit and Plotly for the dashboard. FastAPI for the REST layer. All free tier or open source.
