@@ -65,5 +65,8 @@ jobs:
             echo "No data changes to commit."
           else
             git commit -m "chore(data): automated daily refresh $(date -u +%Y-%m-%d)"
+            # Rebase on top of any commits pushed while we were running
+            # (e.g. user edits to README). Then push cleanly.
+            git pull --rebase --autostash origin main
             git push
           fi
