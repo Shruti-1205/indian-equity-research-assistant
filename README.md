@@ -2,6 +2,26 @@
 
 Explains why any NSE stock moved on any trading day, using only verified primary sources. Prices from Yahoo Finance. Corporate filings from BSE. Institutional flow from NSE. Global macro from FRED. Every claim in the output is traced back to its source. A validation layer prevents fabricated numbers from reaching the reader.
 
+## Screenshots
+
+Home page, welcome and natural-language query box.
+
+![Home page](docs/screenshots/homepage1.png)
+
+Deep Dive: full pipeline on a single stock, with cited sources and grounding check.
+
+![Deep Dive result](docs/screenshots/stock_deepdive2.png)
+
+Market pulse: biggest movers and sector performance at a glance.
+
+![Market Pulse](docs/screenshots/market_pulse.png)
+
+Model evaluation: measured accuracy on a labeled benchmark.
+
+![Benchmark metrics](docs/screenshots/model_eval1.png)
+
+**Live demo:** [indian-equity-research-assistant.streamlit.app](https://indian-equity-research-assistant.streamlit.app/)
+
 ## Example
 
 Query: `Why did Eichermot drop on April 13?`
