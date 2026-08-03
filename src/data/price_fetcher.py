@@ -74,6 +74,15 @@ def fetch_all(symbols: list[str], period: str = "2y", pause: float = 1.5):
         for s, err in failed:
             print(f"  {s}: {err}")
 
+    # Individual symbols fail routinely (renamed or delisted tickers), so those
+    # stay non-fatal. Every symbol failing means Yahoo is blocking or down, and
+    # that must not pass as a green build with stale data.
+    if symbols and len(failed) == len(symbols):
+        raise RuntimeError(
+            f"All {len(symbols)} symbols failed to download — Yahoo is blocking or "
+            "unreachable. Last error: " + failed[-1][1]
+        )
+
 
 def fetch_watchlist(period: str = "2y"):
     fetch_all(WATCHLIST + list(SECTOR_INDICES.values()), period=period)

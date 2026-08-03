@@ -56,6 +56,14 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m scripts.refresh_macro
 
+      # Both stores grow every run (DuckDB never releases freed blocks, SQLite
+      # leaves free pages). market.duckdb reached 97 MiB on 2026-06-08 and the
+      # next run pushed it past GitHub's hard 100 MiB per-file limit, which is
+      # why every push since then was rejected. Compacting here keeps it ~13 MiB
+      # and fails the build early if that ever stops being enough.
+      - name: Compact data files
+        run: python -m scripts.compact_data
+
       - name: Commit refreshed data
         run: |
           git config user.name "github-actions[bot]"

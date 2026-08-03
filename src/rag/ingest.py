@@ -25,6 +25,17 @@ def ingest_all(days_back: int = 365) -> None:
     print(f"\nTotal documents upserted: {total}")
     print(f"Collection size now: {stats()['count']}")
 
+    # A working run re-upserts a year of filings for ~100 companies, so the
+    # total is always in the thousands. Zero means the fetch is broken, not that
+    # the market went quiet — which is how a retired BSE endpoint sat unnoticed
+    # from 2026-05-29 while this step kept reporting success.
+    if not total and per_stock:
+        raise RuntimeError(
+            f"Ingested 0 announcements across {len(per_stock)} symbols — the BSE "
+            "endpoint is almost certainly broken or blocked. Check "
+            "src/data/announcements_fetcher.py:BSE_URL against bseindia.com."
+        )
+
     # Top 10 most active companies in last year
     top = sorted(per_stock.items(), key=lambda kv: kv[1], reverse=True)[:10]
     print("\nMost active filers:")

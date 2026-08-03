@@ -1,10 +1,56 @@
 """DuckDB connection + schema bootstrap."""
+import os
+from pathlib import Path
+
 import duckdb
 from config import DUCKDB_PATH
 
 
 def get_conn():
     return duckdb.connect(str(DUCKDB_PATH))
+
+
+def compact() -> tuple[int, int]:
+    """Rewrite the database into a fresh file to reclaim dead space.
+
+    DuckDB never hands freed blocks back to the OS, and the daily refresh
+    re-upserts 2y of prices and rebuilds the whole `features` table on every
+    run. That grew the committed file by ~5 MiB/day: 23 MiB in April, 97 MiB
+    by June, at which point the next run crossed GitHub's hard 100 MiB
+    per-file limit and the workflow's `git push` started being rejected.
+
+    Copying into a new file drops it back to the live-data size (~13 MiB).
+    Sequence positions are carried over, so `llm_usage_seq` keeps counting
+    past the existing rows instead of restarting and colliding on the PK.
+
+    Returns (bytes_before, bytes_after).
+    """
+    src = Path(DUCKDB_PATH)
+    if not src.exists():
+        return (0, 0)
+
+    before = src.stat().st_size
+    tmp = src.with_name(src.name + ".compact")
+    if tmp.exists():
+        tmp.unlink()
+
+    con = duckdb.connect()
+    try:
+        # as_posix() because DuckDB treats backslashes in a quoted path as escapes.
+        con.execute(f"ATTACH '{src.as_posix()}' AS src_db")
+        con.execute(f"ATTACH '{tmp.as_posix()}' AS dst_db")
+        con.execute("COPY FROM DATABASE src_db TO dst_db")
+    finally:
+        con.close()
+
+    os.replace(tmp, src)
+    # The old file's WAL belongs to the file we just replaced; leaving it would
+    # make the next open try to replay it against unrelated content.
+    wal = src.with_name(src.name + ".wal")
+    if wal.exists():
+        wal.unlink()
+
+    return (before, src.stat().st_size)
 
 
 def init_schema():

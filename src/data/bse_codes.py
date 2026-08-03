@@ -35,7 +35,10 @@ NSE_TO_BSE = {
     "POWERGRID.NS":   "532898",
     "NTPC.NS":        "532555",
     "M&M.NS":         "500520",
-    "TATAMOTORS.NS":  "500570",
+    # 500570 stayed with the renamed original entity (now Tata Motors
+    # Passenger Vehicles); the demerged CV business got a new code.
+    "TMPV.NS":        "500570",
+    "TMCV.NS":        "544569",
     "TATASTEEL.NS":   "500470",
     "JSWSTEEL.NS":    "500228",
     "COALINDIA.NS":   "533278",
@@ -59,7 +62,7 @@ NSE_TO_BSE = {
     "ADANIPORTS.NS":  "532921",
     "TATACONSUM.NS":  "500800",
     "UPL.NS":         "512070",
-    "LTIM.NS":        "540005",
+    "LTM.NS":         "540005",
 
     # Nifty Next 50
     "ADANIGREEN.NS":  "541450",

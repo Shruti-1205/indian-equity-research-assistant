@@ -180,3 +180,52 @@ def _encode_query(text: str):
 def stats() -> dict:
     col = get_collection()
     return {"count": col.count()}
+
+
+def prune_older_than(days: int = 400) -> int:
+    """Drop announcements older than `days`. Returns the number deleted.
+
+    `ingest_all` only ever refreshes the trailing 365 days and no caller passes
+    a `days_back` above 365, so anything past that is dead weight that only
+    grows the committed file. The default keeps a ~5 week margin over the
+    ingest window so nothing still in use is dropped.
+    """
+    col = get_collection()
+    cutoff = datetime.fromordinal(datetime.now().date().toordinal() - days).strftime("%Y-%m-%d")
+
+    # Chroma's where-filter can't do string range comparisons, so select in Python.
+    got = col.get(include=["metadatas"])
+    stale = [
+        _id for i, _id in enumerate(got["ids"])
+        if (got["metadatas"][i] or {}).get("date", "") and (got["metadatas"][i] or {})["date"] < cutoff
+    ]
+    if stale:
+        # Chunked: a single delete of many thousands of ids blows past SQLite's
+        # variable limit inside Chroma.
+        for start in range(0, len(stale), 500):
+            col.delete(ids=stale[start:start + 500])
+    return len(stale)
+
+
+def vacuum() -> tuple[int, int]:
+    """VACUUM the Chroma SQLite file to reclaim space left by daily re-upserts.
+
+    Each refresh re-upserts a full year of announcements, so the file carries a
+    growing tail of free pages. Unlike DuckDB this one is not near GitHub's
+    100 MiB per-file limit yet, but it is on the same trajectory.
+
+    Returns (bytes_before, bytes_after).
+    """
+    import sqlite3
+
+    path = CHROMA_DIR / "chroma.sqlite3"
+    if not path.exists():
+        return (0, 0)
+
+    before = path.stat().st_size
+    con = sqlite3.connect(str(path))
+    try:
+        con.execute("VACUUM")
+    finally:
+        con.close()
+    return (before, path.stat().st_size)

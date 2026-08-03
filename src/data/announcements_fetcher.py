@@ -14,7 +14,10 @@ from tqdm import tqdm
 
 from src.data.bse_codes import NSE_TO_BSE
 
-BSE_URL = "https://api.bseindia.com/BseIndiaAPI/api/AnnGetData/w"
+# BSE retired AnnGetData/w around 2026-05-29: it still answers 200 but the body
+# is the bare JSON string "No Record Found!" for every scrip. AnnSubCategoryGetData/w
+# is the endpoint their site uses now and returns the identical Table/Table1 shape.
+BSE_URL = "https://api.bseindia.com/BseIndiaAPI/api/AnnSubCategoryGetData/w"
 WARMUP_URLS = [
     "https://www.bseindia.com/",
     "https://www.bseindia.com/corporates/ann.html",
@@ -74,6 +77,7 @@ def fetch_announcements_for_scrip(
             "strSearch": "P",
             "strToDate": _fmt(to_date),
             "strType": "C",
+            "subcategory": "-1",
         }
         try:
             r = s.get(BSE_URL, params=params, timeout=20)
@@ -85,6 +89,14 @@ def fetch_announcements_for_scrip(
         except Exception as e:
             if debug:
                 print(f"  [err] {scripcode} p{page}: {e}")
+            break
+
+        # A retired/rotated endpoint answers 200 with a bare string like
+        # "No Record Found!" rather than an object. Treat that as "no data"
+        # instead of raising AttributeError on .get.
+        if not isinstance(data, dict):
+            if debug:
+                print(f"  [err] {scripcode} p{page}: unexpected body {data!r:.80}")
             break
 
         rows = data.get("Table") or []

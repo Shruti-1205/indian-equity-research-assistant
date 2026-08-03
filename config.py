@@ -46,17 +46,26 @@ GROQ_FAST_MODEL = "llama-3.1-8b-instant"
 
 # Watchlist covers Nifty 100 (Nifty 50 plus Nifty Next 50).
 # yfinance uses the .NS suffix for NSE symbols.
+#
+# Two symbols changed under us and started 404ing on Yahoo:
+#   LTIM -> LTM      LTIMindtree rebranded to LTM Ltd, symbol changed 2026-02-27.
+#   TATAMOTORS       demerged. The original entity was renamed Tata Motors
+#                    Passenger Vehicles (TMPV, keeps BSE 500570 and the full
+#                    price history); the carved-out CV business listed
+#                    2025-11-12 as TMCV (BSE 544569) and took the Tata Motors
+#                    Ltd name. Both are tracked, so the old TATAMOTORS exposure
+#                    stays covered across the split.
 NIFTY50 = [
     "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
     "HINDUNILVR.NS", "SBIN.NS", "BHARTIARTL.NS", "ITC.NS", "KOTAKBANK.NS",
     "LT.NS", "AXISBANK.NS", "ASIANPAINT.NS", "MARUTI.NS", "SUNPHARMA.NS",
     "TITAN.NS", "BAJFINANCE.NS", "NESTLEIND.NS", "HCLTECH.NS", "WIPRO.NS",
     "ULTRACEMCO.NS", "ADANIENT.NS", "POWERGRID.NS", "NTPC.NS", "M&M.NS",
-    "TATAMOTORS.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "COALINDIA.NS", "ONGC.NS",
+    "TMPV.NS", "TATASTEEL.NS", "JSWSTEEL.NS", "COALINDIA.NS", "ONGC.NS",
     "TECHM.NS", "BAJAJFINSV.NS", "DRREDDY.NS", "CIPLA.NS", "GRASIM.NS",
     "HDFCLIFE.NS", "SBILIFE.NS", "BPCL.NS", "HEROMOTOCO.NS", "BAJAJ-AUTO.NS",
     "EICHERMOT.NS", "BRITANNIA.NS", "DIVISLAB.NS", "INDUSINDBK.NS", "APOLLOHOSP.NS",
-    "HINDALCO.NS", "ADANIPORTS.NS", "TATACONSUM.NS", "UPL.NS", "LTIM.NS",
+    "HINDALCO.NS", "ADANIPORTS.NS", "TATACONSUM.NS", "UPL.NS", "LTM.NS",
 ]
 
 NIFTY_NEXT_50 = [
@@ -69,7 +78,7 @@ NIFTY_NEXT_50 = [
     "NMDC.NS", "PIDILITIND.NS", "PNB.NS", "PFC.NS", "RECLTD.NS",
     "SBICARD.NS", "SHREECEM.NS", "SIEMENS.NS", "SRF.NS", "TORNTPHARM.NS",
     "TRENT.NS", "TVSMOTOR.NS", "UNITDSPR.NS", "VEDL.NS", "VBL.NS",
-    "ETERNAL.NS", "ZYDUSLIFE.NS", "LODHA.NS", "TATAPOWER.NS",
+    "ETERNAL.NS", "ZYDUSLIFE.NS", "LODHA.NS", "TATAPOWER.NS", "TMCV.NS",
 ]
 
 NIFTY100 = NIFTY50 + NIFTY_NEXT_50
@@ -98,7 +107,7 @@ STOCK_TO_SECTOR = {
     "ADANIPOWER.NS": "ENERGY", "ADANIGREEN.NS": "ENERGY", "JSWENERGY.NS": "ENERGY",
     # IT
     "TCS.NS": "IT", "INFY.NS": "IT", "HCLTECH.NS": "IT",
-    "WIPRO.NS": "IT", "TECHM.NS": "IT", "LTIM.NS": "IT",
+    "WIPRO.NS": "IT", "TECHM.NS": "IT", "LTM.NS": "IT",
     # Banks
     "HDFCBANK.NS": "BANKNIFTY", "ICICIBANK.NS": "BANKNIFTY", "SBIN.NS": "BANKNIFTY",
     "KOTAKBANK.NS": "BANKNIFTY", "AXISBANK.NS": "BANKNIFTY", "INDUSINDBK.NS": "BANKNIFTY",
@@ -110,7 +119,7 @@ STOCK_TO_SECTOR = {
     "SBICARD.NS": "FINSRV", "PFC.NS": "FINSRV", "RECLTD.NS": "FINSRV",
     "IRFC.NS": "FINSRV",
     # Auto
-    "MARUTI.NS": "AUTO", "TATAMOTORS.NS": "AUTO", "M&M.NS": "AUTO",
+    "MARUTI.NS": "AUTO", "TMPV.NS": "AUTO", "TMCV.NS": "AUTO", "M&M.NS": "AUTO",
     "HEROMOTOCO.NS": "AUTO", "BAJAJ-AUTO.NS": "AUTO", "EICHERMOT.NS": "AUTO",
     "TVSMOTOR.NS": "AUTO", "BOSCHLTD.NS": "AUTO",
     # Pharma

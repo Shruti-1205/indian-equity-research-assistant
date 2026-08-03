@@ -14,5 +14,8 @@ venv/
 # WAL files are transient and should not be versioned.
 data/*.duckdb.wal
 
+# Scratch file left behind if scripts/compact_data.py dies mid-rewrite.
+data/*.duckdb.compact
+
 # Benchmark progress checkpoints are transient.
 benchmark/progress.json
