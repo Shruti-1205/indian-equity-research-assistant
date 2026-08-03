@@ -1,5 +1,12 @@
 """Auto-seed a labeled benchmark set from the live DuckDB data.
 
+NOT the source of the current `labels.csv`. This is the legacy rule-based
+seeder, kept for bootstrapping a fresh label set from scratch. The labels the
+benchmark actually scores against are produced by an independent Claude Opus
+judge over `build_candidates.py` output — see that module and the methodology
+note in `report.md`. Replaying the rules below reproduces only ~73% of the
+current labels, which is the quickest way to confirm they are not rule-derived.
+
 Strategy: for each stock on each of the last ~10 trading days, classify the
 "likely correct" primary_driver using a deterministic, evidence-based rule:
 
@@ -13,8 +20,8 @@ Strategy: for each stock on each of the last ~10 trading days, classify the
   Rule 4: else → expected: unclear
 
 These rules encode the same taxonomy as the synthesis prompt — so "accuracy"
-against them is essentially self-consistency. To get independent ground truth,
-you'd hand-label. We honestly flag this in the README.
+against them would be essentially self-consistency. That is precisely why the
+scored labels come from an independent judge instead.
 
 We pick 20 rows biased toward larger moves (|pct_change_1d| ≥ 2%) across
 multiple dates so the benchmark covers many drivers.

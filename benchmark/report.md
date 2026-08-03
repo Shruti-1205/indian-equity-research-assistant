@@ -134,6 +134,6 @@ unclear                        7        15         3
 
 ## Methodology note
 
-Labels in `benchmark/labels.csv` are generated deterministically from the underlying evidence (see `benchmark/build_labels.py`) using a rule set that mirrors the analyst taxonomy in the synthesis prompt. For rigorous independent evaluation, these labels should be hand-reviewed by a domain expert — the `note` column is provided for that purpose.
+Labels in `benchmark/labels.csv` are produced by an independent LLM judge. `benchmark/build_candidates.py` assembles one row per (symbol, date) case containing every signal the synthesis agent sees; that file is handed to Claude Opus, which assigns the ground-truth driver. The judge is a strictly stronger model than the one being scored, which mitigates self-preference bias (Zheng et al., NeurIPS 2023). For rigorous evaluation these labels should still be hand-reviewed by a domain expert — the `note` column is provided for that purpose.
 
 The **hallucination rate** metric is independent of label quality: it measures whether every numeric claim in the synthesis output appears verbatim in the source data, regardless of whether the classification is correct.
