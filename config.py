@@ -147,3 +147,176 @@ STOCK_TO_SECTOR = {
     "SHREECEM.NS": "NIFTY50", "SIEMENS.NS": "NIFTY50", "SRF.NS": "NIFTY50",
     "TRENT.NS": "NIFTY50", "ETERNAL.NS": "NIFTY50",
 }
+
+
+# --- Display names -----------------------------------------------------------
+# The UI shows company names rather than tickers. Sourced from BSE's SLONGNAME
+# (already carried on every announcement), with the " Ltd"/" Limited" suffix
+# trimmed so they fit chart axes.
+COMPANY_NAMES = {
+    "RELIANCE.NS":   "Reliance Industries",
+    "TCS.NS":        "Tata Consultancy Services",
+    "HDFCBANK.NS":   "HDFC Bank",
+    "INFY.NS":       "Infosys",
+    "ICICIBANK.NS":  "ICICI Bank",
+    "HINDUNILVR.NS": "Hindustan Unilever",
+    "SBIN.NS":       "State Bank of India",
+    "BHARTIARTL.NS": "Bharti Airtel",
+    "ITC.NS":        "ITC",
+    "KOTAKBANK.NS":  "Kotak Mahindra Bank",
+    "LT.NS":         "Larsen & Toubro",
+    "AXISBANK.NS":   "AXIS Bank",
+    "ASIANPAINT.NS": "Asian Paints",
+    "MARUTI.NS":     "Maruti Suzuki India",
+    "SUNPHARMA.NS":  "Sun Pharmaceutical Industries",
+    "TITAN.NS":      "Titan Company",
+    "BAJFINANCE.NS": "Bajaj Finance",
+    "NESTLEIND.NS":  "Nestle India",
+    "HCLTECH.NS":    "HCL Technologies",
+    "WIPRO.NS":      "Wipro",
+    "ULTRACEMCO.NS": "UltraTech Cement",
+    "ADANIENT.NS":   "Adani Enterprises",
+    "POWERGRID.NS":  "Power Grid Corporation of India",
+    "NTPC.NS":       "NTPC",
+    "M&M.NS":        "Mahindra & Mahindra",
+    "TMPV.NS":       "Tata Motors Passenger Vehicles",
+    "TATASTEEL.NS":  "Tata Steel",
+    "JSWSTEEL.NS":   "JSW Steel",
+    "COALINDIA.NS":  "Coal India",
+    "ONGC.NS":       "Oil and Natural Gas Corporation",
+    "TECHM.NS":      "Tech Mahindra",
+    "BAJAJFINSV.NS": "Bajaj Finserv",
+    "DRREDDY.NS":    "Dr Reddys Laboratories",
+    "CIPLA.NS":      "Cipla",
+    "GRASIM.NS":     "Grasim Industries",
+    "HDFCLIFE.NS":   "HDFC Life Insurance Company",
+    "SBILIFE.NS":    "SBI Life Insurance Company",
+    "BPCL.NS":       "Bharat Petroleum Corporation",
+    "HEROMOTOCO.NS": "Hero MotoCorp",
+    "BAJAJ-AUTO.NS": "Bajaj Auto",
+    "EICHERMOT.NS":  "Eicher Motors",
+    "BRITANNIA.NS":  "Britannia Industries",
+    "DIVISLAB.NS":   "Divis Laboratories",
+    "INDUSINDBK.NS": "Indusind Bank",
+    "APOLLOHOSP.NS": "Apollo Hospitals Enterprise",
+    "HINDALCO.NS":   "Hindalco Industries",
+    "ADANIPORTS.NS": "Adani Ports and Special Economic Zone",
+    "TATACONSUM.NS": "Tata Consumer Products",
+    "UPL.NS":        "UPL",
+    "LTM.NS":        "LTM",
+    "ADANIGREEN.NS": "Adani Green Energy",
+    "ADANIPOWER.NS": "Adani Power",
+    "AMBUJACEM.NS":  "Ambuja Cements",
+    "BANKBARODA.NS": "Bank of Baroda",
+    "BERGEPAINT.NS": "Berger Paints India",
+    "BEL.NS":        "Bharat Electronics",
+    "BOSCHLTD.NS":   "Bosch",
+    "CANBK.NS":      "Canara Bank",
+    "CHOLAFIN.NS":   "Cholamandalam Investment and Finance Company",
+    "COLPAL.NS":     "Colgate Palmolive (India)",
+    "DABUR.NS":      "Dabur India",
+    "DMART.NS":      "Avenue Supermarts",
+    "DLF.NS":        "DLF",
+    "DIXON.NS":      "Dixon Technologies (India)",
+    "GAIL.NS":       "Gail (India)",
+    "GODREJCP.NS":   "Godrej Consumer Products",
+    "HAL.NS":        "Hindustan Aeronautics",
+    "HAVELLS.NS":    "Havells India",
+    "HDFCAMC.NS":    "HDFC Asset Management Company",
+    "ICICIGI.NS":    "ICICI Lombard General Insurance",
+    "IOC.NS":        "Indian Oil Corporation",
+    "INDHOTEL.NS":   "Indian Hotels Company",
+    "INDUSTOWER.NS": "Indus Towers",
+    "IRCTC.NS":      "Indian Railway Catering and Tourism Corporation",
+    "IRFC.NS":       "Indian Railway Finance Corporation",
+    "JINDALSTEL.NS": "Jindal Steel",
+    "JSWENERGY.NS":  "JSW Energy",
+    "LICI.NS":       "Life Insurance Corporation of India",
+    "MARICO.NS":     "Marico",
+    "NAUKRI.NS":     "Info Edge (India)",
+    "NMDC.NS":       "NMDC",
+    "PIDILITIND.NS": "Pidilite Industries",
+    "PNB.NS":        "Punjab National Bank",
+    "PFC.NS":        "Power Finance Corporation",
+    "RECLTD.NS":     "REC",
+    "SBICARD.NS":    "SBI Cards and Payment Services",
+    "SHREECEM.NS":   "Shree Cement",
+    "SIEMENS.NS":    "Siemens",
+    "SRF.NS":        "SRF",
+    "TORNTPHARM.NS": "Torrent Pharmaceuticals",
+    "TRENT.NS":      "Trent",
+    "TVSMOTOR.NS":   "TVS Motor Company",
+    "UNITDSPR.NS":   "United Spirits",
+    "VEDL.NS":       "Vedanta",
+    "VBL.NS":        "Varun Beverages",
+    "ETERNAL.NS":    "Eternal",
+    "ZYDUSLIFE.NS":  "Zydus Lifesciences",
+    "LODHA.NS":      "Lodha Developers",
+    "TATAPOWER.NS":  "Tata Power Company",
+    "TMCV.NS":       "Tata Motors",
+}
+
+INDEX_NAMES = {
+    "^NSEI":       "Nifty 50",
+    "^NSEBANK":    "Bank Nifty",
+    "^CNXIT":      "Nifty IT",
+    "^CNXAUTO":    "Nifty Auto",
+    "^CNXPHARMA":  "Nifty Pharma",
+    "^CNXFMCG":    "Nifty FMCG",
+    "^CNXMETAL":   "Nifty Metal",
+    "^CNXENERGY":  "Nifty Energy",
+    "^CNXREALTY":  "Nifty Realty",
+    "^CNXFIN":     "Nifty Financial Services",
+}
+
+# Readable labels for the sector keys used in STOCK_TO_SECTOR / SECTOR_INDICES.
+SECTOR_LABELS = {
+    "NIFTY50":   "Nifty 50",
+    "BANKNIFTY": "Banks",
+    "IT":        "IT",
+    "AUTO":      "Auto",
+    "PHARMA":    "Pharma",
+    "FMCG":      "FMCG",
+    "METAL":     "Metals",
+    "ENERGY":    "Energy",
+    "REALTY":    "Realty",
+    "FINSRV":    "Financial Services",
+}
+
+
+def display_name(symbol: str) -> str:
+    """Company or index name for `symbol`, falling back to the bare ticker.
+
+    Falling back rather than raising matters: a symbol can enter the database
+    before it is added here (a new listing, or a ticker renamed mid-quarter),
+    and a missing label should degrade to the ticker instead of breaking the
+    page that renders it.
+    """
+    if symbol in COMPANY_NAMES:
+        return COMPANY_NAMES[symbol]
+    if symbol in INDEX_NAMES:
+        return INDEX_NAMES[symbol]
+    return symbol.replace(".NS", "")
+
+
+def sector_label(key: str) -> str:
+    """Readable label for a sector key, falling back to the key itself."""
+    return SECTOR_LABELS.get(key, key)
+
+
+def short_name(symbol: str, limit: int = 26) -> str:
+    """`display_name` clipped for chart axes, where a long label steals plot width.
+
+    Some constituents have genuinely long legal names ("Indian Railway Catering
+    and Tourism Corporation" is 47 characters), enough to squeeze a horizontal
+    bar chart. Clips on a word boundary so the result still reads as a name.
+    Tables and headings should use `display_name` instead.
+    """
+    name = display_name(symbol)
+    if len(name) <= limit:
+        return name
+    cut = name[:limit].rsplit(" ", 1)[0]
+    # A single long word leaves nothing to cut back to; clip it directly.
+    if not cut:
+        cut = name[:limit]
+    return cut + "…"

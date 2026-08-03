@@ -84,7 +84,9 @@ NSE_TO_BSE = {
     "HAL.NS":         "541154",
     "HAVELLS.NS":     "517354",
     "HDFCAMC.NS":     "541729",
-    "ICICIGI.NS":     "540133",
+    # 540133 is ICICIPRULI (ICICI Prudential Life), a different company.
+    # ICICI Lombard General Insurance is 540716.
+    "ICICIGI.NS":     "540716",
     "ICICIPRULI.NS":  "540133",
     "IOC.NS":         "530965",
     "INDHOTEL.NS":    "500850",

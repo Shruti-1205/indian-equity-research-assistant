@@ -9,12 +9,17 @@ import json
 import re
 from datetime import date, datetime, timedelta
 
-from config import GROQ_API_KEY
+from config import COMPANY_NAMES, GROQ_API_KEY
 from src.agents.llm_client import call_llm
 from src.agents.prompts import ORCHESTRATOR_SYSTEM
 from src.data.bse_codes import NSE_TO_BSE
 
 VALID_SYMBOLS = set(NSE_TO_BSE.keys())
+
+# The UI labels everything with company names, so a user reasonably types (or
+# the LLM echoes back) "Tata Motors Passenger Vehicles" rather than TMPV.NS.
+# Resolve those to tickers instead of failing to a blank "unknown" intent.
+_NAME_TO_SYMBOL = {name.upper(): sym for sym, name in COMPANY_NAMES.items()}
 _TICKER_RE = re.compile(r"\b([A-Z&\-]{2,12})\.NS\b")
 _DATE_RE = re.compile(r"\b(20\d{2})-(\d{1,2})-(\d{1,2})\b")
 
@@ -51,6 +56,8 @@ def _coerce_symbol(sym: str | None) -> str | None:
     if not sym:
         return None
     s = sym.strip().upper()
+    if s in _NAME_TO_SYMBOL:
+        return _NAME_TO_SYMBOL[s]
     if not s.endswith(".NS"):
         s = s + ".NS"
     return s if s in VALID_SYMBOLS else None

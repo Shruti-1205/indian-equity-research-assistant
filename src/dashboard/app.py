@@ -29,7 +29,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from config import WATCHLIST, STOCK_TO_SECTOR
+from config import WATCHLIST, STOCK_TO_SECTOR, display_name, sector_label, short_name
 from src.agents.graph import run as run_pipeline
 from src.data.db import get_conn
 
@@ -118,7 +118,7 @@ def sector_performance(date: str) -> pd.DataFrame:
     con.close()
     if df.empty:
         return pd.DataFrame(columns=["sector", "avg_return", "stocks"])
-    df["sector"] = df["symbol"].map(STOCK_TO_SECTOR).fillna("Other")
+    df["sector"] = df["symbol"].map(STOCK_TO_SECTOR).fillna("Other").map(sector_label)
     g = df.groupby("sector")["pct_change_1d"].agg(["mean", "count"]).reset_index()
     g.columns = ["sector", "avg_return", "stocks"]
     g["avg_return"] = g["avg_return"].round(2)
@@ -203,7 +203,7 @@ def _render_nl_query(text: str):
 
     intent = plan.get("intent")
     st.caption(f"Interpreted as: **{intent}**"
-               + (f" for `{plan['symbol']}`" if plan.get("symbol") else "")
+               + (f" for **{display_name(plan['symbol'])}**" if plan.get("symbol") else "")
                + f" on `{plan.get('query_date', 'today')}`")
 
     if intent == "explain_move" and plan.get("symbol"):
@@ -213,7 +213,7 @@ def _render_nl_query(text: str):
         # (latest trading day on or before the requested date). Avoids showing
         # a future date header when the body correctly cites the last session.
         effective = (state.get("price") or {}).get("date") or plan["query_date"]
-        st.markdown(f"### {plan['symbol']} on {effective}")
+        st.markdown(f"### {display_name(plan['symbol'])} on {effective}")
         if str(effective) != str(plan["query_date"]):
             st.caption(f"(Requested {plan['query_date']}. Most recent trading "
                        f"session with data is {effective}.)")
@@ -236,12 +236,12 @@ def _render_nl_query(text: str):
         with mc1:
             st.markdown("**Top gainers**")
             for row in r.get("top_gainers", []):
-                sym = row["symbol"].replace(".NS", "")
+                sym = display_name(row["symbol"])
                 st.caption(f"{sym}: +{row['pct_1d']}% (vol {row['vol_mult']}x)")
         with mc2:
             st.markdown("**Top losers**")
             for row in r.get("top_losers", []):
-                sym = row["symbol"].replace(".NS", "")
+                sym = display_name(row["symbol"])
                 st.caption(f"{sym}: {row['pct_1d']}% (vol {row['vol_mult']}x)")
 
     elif intent == "stock_screen":
@@ -253,7 +253,7 @@ def _render_nl_query(text: str):
         rows = r.get("rows", [])
         if rows:
             df = pd.DataFrame(rows)
-            df["symbol"] = df["symbol"].str.replace(".NS", "", regex=False)
+            df["symbol"] = df["symbol"].map(display_name)
             st.dataframe(df, use_container_width=True, hide_index=True)
         else:
             st.info("No matches.")
@@ -264,7 +264,7 @@ def _render_nl_query(text: str):
         st.markdown(f"### Filings matching: {r.get('topic')}")
         st.write(r.get("summary", ""))
         for h in r.get("hits", []):
-            with st.expander(f"{h.get('date')}: {h.get('symbol')} "
+            with st.expander(f"{h.get('date')}: {display_name(h.get('symbol', ''))} "
                              f"[{h.get('category','?')[:24]}]"):
                 st.write(h.get("text", ""))
 
@@ -383,7 +383,7 @@ def render_home():
             colors = ["#16a34a" if v >= 0 else "#dc2626" for v in df["pct_1d"]]
             fig.add_trace(go.Bar(
                 x=df["pct_1d"],
-                y=[s.replace(".NS", "") for s in df["symbol"]],
+                y=[short_name(s) for s in df["symbol"]],
                 orientation="h",
                 marker_color=colors,
                 text=[f"{v:+.2f}%" for v in df["pct_1d"]],
@@ -446,7 +446,7 @@ def render_deep_dive():
 
     c1, c2, c3 = st.columns([3, 2, 1])
     with c1:
-        symbol = st.selectbox("Stock", WATCHLIST,
+        symbol = st.selectbox("Stock", WATCHLIST, format_func=display_name,
                               index=WATCHLIST.index("EICHERMOT.NS") if "EICHERMOT.NS" in WATCHLIST else 0)
     with c2:
         default = dt.date.fromisoformat(latest_trading_date())
@@ -462,7 +462,7 @@ def render_deep_dive():
         fig = go.Figure()
         fig.add_trace(go.Candlestick(
             x=ph["date"], open=ph["open"], high=ph["high"],
-            low=ph["low"], close=ph["close"], name=symbol,
+            low=ph["low"], close=ph["close"], name=display_name(symbol),
             showlegend=False,
         ))
         fig.add_shape(
@@ -474,7 +474,7 @@ def render_deep_dive():
         fig.update_layout(
             height=360, margin=dict(l=10, r=10, t=30, b=10),
             xaxis_rangeslider_visible=False,
-            title=f"{symbol.replace('.NS','')} price (last 180 days)",
+            title=f"{display_name(symbol)} price (last 180 days)",
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -488,7 +488,7 @@ def render_deep_dive():
     # Headline card
     left, right = st.columns([3, 1])
     with left:
-        st.markdown(f"### What drove {symbol.replace('.NS','')} on {query_date}")
+        st.markdown(f"### What drove {display_name(symbol)} on {query_date}")
         st.write(state.get("explanation", "No explanation generated."))
         citations = state.get("citations") or []
         if citations:
@@ -607,7 +607,7 @@ def render_market_pulse():
             st.info("No data.")
         else:
             df_display = df.copy()
-            df_display["symbol"] = df_display["symbol"].str.replace(".NS", "", regex=False)
+            df_display["symbol"] = df_display["symbol"].map(display_name)
             df_display.columns = ["Stock", "1D %", "From 52w high %",
                                   "Volume mult", "Close"]
             st.dataframe(df_display, use_container_width=True, hide_index=True)
@@ -812,6 +812,8 @@ def render_benchmark():
     if rows_data:
         with st.expander("Show per case results (all 100+ cases)"):
             df = pd.DataFrame(rows_data)
+            if "symbol" in df.columns:
+                df["symbol"] = df["symbol"].map(display_name)
             show_cols = [c for c in ["symbol", "date", "expected", "predicted",
                                      "match", "confidence", "validation_ok",
                                      "latency_s"] if c in df.columns]
