@@ -1,0 +1,11 @@
+# The dashboard's custom CSS and Plotly charts hardcode light-mode values
+# (#f9fafb panels, #111827 text, plot_bgcolor="white"). Under Streamlit's dark
+# theme the chrome inverts but those do not, leaving dark text on dark panels
+# and white boxes around every chart. Pinning the theme to light makes the app
+# render the same for every viewer regardless of their OS setting.
+#
+# Only `base` is set on purpose: Streamlit's default light palette is what the
+# app already renders today, so this changes nothing for viewers who were
+# seeing light mode. Overriding the individual colours here would.
+[theme]
+base = "light"
