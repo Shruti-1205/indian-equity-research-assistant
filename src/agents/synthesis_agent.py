@@ -1,5 +1,5 @@
 """Synthesis agent: unified LLM client (Claude Haiku 4.5 if available + budget
-ok, Groq 70B otherwise) + strict source-grounding prompt.
+ok, a free provider otherwise) + strict source-grounding prompt.
 """
 from __future__ import annotations
 
@@ -139,7 +139,7 @@ def _parse_json(text: str) -> dict:
 def synthesis_agent(state: AgentState) -> dict:
     context = _format_context(state)
 
-    # call_llm() handles routing: Claude Haiku if budget allows, else Groq 70B.
+    # call_llm() handles routing: Claude Haiku if budget allows, else a free provider.
     # Prompt caching on the system message keeps repeat calls cheap on Anthropic.
     r = call_llm(
         system=SYNTHESIS_SYSTEM,

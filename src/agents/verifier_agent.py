@@ -56,7 +56,7 @@ using only numbers that actually appear in the source context above.
     r = call_llm(
         system=VERIFIER_SYSTEM,
         user=user_msg,
-        agent="verifier",           # forced to free Groq 8B by the router
+        agent="verifier",           # forced to the small free Groq model by the router
         json_mode=True,
         max_tokens=1200,
         temperature=0.0,

@@ -206,7 +206,7 @@ def main():
 
     if not args.skip_llm:
         _header("LLM layer")
-        results.append(_check("orchestrator (Groq 8B)", check_orchestrator))
+        results.append(_check("orchestrator (Groq)", check_orchestrator))
         results.append(_check("LLM router single call", check_llm_router))
 
         _header("Query handlers")

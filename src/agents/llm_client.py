@@ -48,9 +48,11 @@ PRICING: dict[str, dict[str, float]] = {
         "input": 3.00, "output": 15.00,
         "cache_read": 0.30, "cache_write": 3.75,
     },
-    # Groq free tier — billed as $0 for tracking purposes.
-    "llama-3.3-70b-versatile": {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
-    "llama-3.1-8b-instant":    {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
+    # Groq free tier — billed as $0 for tracking purposes. The "openai/" prefix
+    # is part of Groq's model id and keeps these distinct from the Cerebras
+    # gpt-oss entry below, which is genuinely paid.
+    "openai/gpt-oss-120b":     {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
+    "openai/gpt-oss-20b":      {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
     # Cerebras — free daily quota, then pay-as-you-go at these rates.
     "llama-3.3-70b":           {"input": 0.0,  "output": 0.0,  "cache_read": 0.0, "cache_write": 0.0},
     "llama3.1-8b":             {"input": 0.10, "output": 0.10, "cache_read": 0.0, "cache_write": 0.0},
@@ -239,7 +241,7 @@ def _call_cerebras(
     )
 
 
-# ────────────── Groq (Llama) ──────────────
+# ────────────── Groq ──────────────
 
 def _call_groq(
     model: str,
@@ -297,10 +299,10 @@ def call_llm(
 
     Routing cascade for agent='synthesis' (tries each in order, falls back on failure):
       1. Claude Haiku 4.5 — if ANTHROPIC_API_KEY set AND today's spend ≤ DAILY_USD_BUDGET
-      2. Cerebras Llama 3.3 70B — if CEREBRAS_API_KEY set (free, 10× Groq quota)
-      3. Groq Llama 3.3 70B — always (free, small daily quota)
+      2. Cerebras Qwen 3 235B — if CEREBRAS_API_KEY set (free, 10× Groq quota)
+      3. Groq gpt-oss-120b — always (free, small daily quota)
 
-    agent='verifier' or 'orchestrator' → always routes to free Groq 8B.
+    agent='verifier' or 'orchestrator' → always routes to the small free Groq model.
     """
     # Force free path for low-stakes agents regardless of 'prefer'.
     if agent in ("orchestrator", "verifier"):

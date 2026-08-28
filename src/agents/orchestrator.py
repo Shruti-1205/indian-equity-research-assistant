@@ -107,7 +107,7 @@ def orchestrate(user_query: str) -> dict:
     r = call_llm(
         system=system,
         user=user_query,
-        agent="orchestrator",       # forced to free Groq 8B by the router
+        agent="orchestrator",       # forced to the small free Groq model by the router
         json_mode=True,
         max_tokens=200,
         temperature=0.0,
