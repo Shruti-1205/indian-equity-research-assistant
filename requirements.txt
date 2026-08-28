@@ -17,7 +17,10 @@ sentence-transformers==3.3.1
 # --- Agents / LLM ---
 langgraph==0.2.60
 langchain==0.3.13
-anthropic>=0.40.0
+# Pinned deliberately: anthropic 1.x dropped `temperature` from
+# Messages.create(), so an unpinned install resolved to 1.2.0 on deploy and
+# every LLM call raised TypeError while local (0.95.0) stayed green.
+anthropic==0.95.0
 
 # --- API + dashboard ---
 fastapi==0.115.6
