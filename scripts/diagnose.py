@@ -33,15 +33,10 @@ def _check(name: str, fn) -> bool:
 
 
 def check_env():
-    from config import (
-        GROQ_API_KEY, FRED_API_KEY, ANTHROPIC_API_KEY,
-        CEREBRAS_API_KEY, DAILY_USD_BUDGET,
-    )
+    from config import FRED_API_KEY, ANTHROPIC_API_KEY, DAILY_USD_BUDGET
     lines = []
-    lines.append(f"groq={'set' if GROQ_API_KEY else 'missing'}")
-    lines.append(f"fred={'set' if FRED_API_KEY else 'missing'}")
     lines.append(f"anthropic={'set' if ANTHROPIC_API_KEY else 'missing'}")
-    lines.append(f"cerebras={'set' if CEREBRAS_API_KEY else 'missing'}")
+    lines.append(f"fred={'set' if FRED_API_KEY else 'missing'}")
     lines.append(f"budget=${DAILY_USD_BUDGET}")
     return ", ".join(lines)
 
@@ -206,7 +201,7 @@ def main():
 
     if not args.skip_llm:
         _header("LLM layer")
-        results.append(_check("orchestrator (Groq)", check_orchestrator))
+        results.append(_check("orchestrator", check_orchestrator))
         results.append(_check("LLM router single call", check_llm_router))
 
         _header("Query handlers")

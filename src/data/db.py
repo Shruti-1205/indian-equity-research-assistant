@@ -112,7 +112,7 @@ def init_schema():
         CREATE TABLE IF NOT EXISTS llm_usage (
             id               BIGINT PRIMARY KEY,
             ts               TIMESTAMP,
-            provider         VARCHAR,   -- 'anthropic' | 'groq'
+            provider         VARCHAR,   -- 'anthropic'
             model            VARCHAR,
             agent            VARCHAR,   -- 'synthesis' | 'verifier' | 'orchestrator'
             input_tokens     INTEGER,

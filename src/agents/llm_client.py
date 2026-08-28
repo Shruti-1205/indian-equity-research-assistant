@@ -4,24 +4,24 @@ prompt caching. Every call is logged to `llm_usage` so you can audit spend.
 Design goals
 ────────────
 1. Never silently exceed DAILY_USD_BUDGET. If the next call would push today's
-   spend over the cap, we raise BudgetExceededError — no fallback to paid.
-2. Free providers (Groq) are always available regardless of budget state.
-3. Prompt caching for Anthropic: the system prompt is marked cacheable so
-   repeat calls within ~5 min pay ~10× less on those tokens.
-4. One log row per call in DuckDB. Use `scripts.usage` to review.
+   spend over the cap, we raise BudgetExceededError rather than spending.
+2. Prompt caching: the system prompt is marked cacheable so repeat calls within
+   ~5 min pay ~10× less on those tokens. The synthesis system prompt is ~4k
+   tokens, so this is most of the input cost.
+3. One log row per call in DuckDB. Use `scripts.usage` to review.
 """
 from __future__ import annotations
 
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, date
 from typing import Any
 
 from config import (
-    ANTHROPIC_API_KEY, GROQ_API_KEY, CEREBRAS_API_KEY,
+    ANTHROPIC_API_KEY,
     DAILY_USD_BUDGET,
-    SYNTHESIS_PRIMARY_MODEL, SYNTHESIS_CEREBRAS_MODEL, SYNTHESIS_GROQ_MODEL,
-    GROQ_FAST_MODEL,
+    SYNTHESIS_PRIMARY_MODEL, FAST_MODEL,
 )
 from src.data.db import get_conn, init_schema
 
@@ -48,17 +48,6 @@ PRICING: dict[str, dict[str, float]] = {
         "input": 3.00, "output": 15.00,
         "cache_read": 0.30, "cache_write": 3.75,
     },
-    # Groq free tier — billed as $0 for tracking purposes. The "openai/" prefix
-    # is part of Groq's model id and keeps these distinct from the Cerebras
-    # gpt-oss entry below, which is genuinely paid.
-    "openai/gpt-oss-120b":     {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
-    "openai/gpt-oss-20b":      {"input": 0.0, "output": 0.0, "cache_read": 0.0, "cache_write": 0.0},
-    # Cerebras — free daily quota, then pay-as-you-go at these rates.
-    "llama-3.3-70b":           {"input": 0.0,  "output": 0.0,  "cache_read": 0.0, "cache_write": 0.0},
-    "llama3.1-8b":             {"input": 0.10, "output": 0.10, "cache_read": 0.0, "cache_write": 0.0},
-    "gpt-oss-120b":            {"input": 0.35, "output": 0.75, "cache_read": 0.0, "cache_write": 0.0},
-    "zai-glm-4.7":             {"input": 2.25, "output": 2.75, "cache_read": 0.0, "cache_write": 0.0},
-    "qwen-3-235b-a22b-instruct-2507": {"input": 0.60, "output": 1.20, "cache_read": 0.0, "cache_write": 0.0},
 }
 
 
@@ -179,107 +168,22 @@ def _call_anthropic(
     )
 
 
-# ────────────── Cerebras (OpenAI-compatible) ──────────────
-
-def _call_cerebras(
-    model: str,
-    system: str,
-    user: str,
-    max_tokens: int,
-    temperature: float,
-    json_mode: bool,
-) -> LLMResult:
-    from openai import OpenAI
-    client = OpenAI(
-        base_url="https://api.cerebras.ai/v1",
-        api_key=CEREBRAS_API_KEY,
-    )
-
-    kwargs: dict[str, Any] = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "temperature": temperature,
-        "max_tokens": max_tokens,
-    }
-    if json_mode:
-        kwargs["response_format"] = {"type": "json_object"}
-
-    # Cerebras free-tier sometimes returns queue_exceeded (429) under load.
-    # Short retry with exponential backoff handles this gracefully; after ~12s
-    # total wait, we bubble up so the router can cascade to Groq.
-    t0 = time.time()
-    last_err: Exception | None = None
-    for attempt, wait in enumerate((0, 1.5, 3, 6)):
-        if wait:
-            time.sleep(wait)
-        try:
-            resp = client.chat.completions.create(**kwargs)
-            last_err = None
-            break
-        except Exception as e:
-            last_err = e
-            msg = str(e).lower()
-            # Only retry for transient queue/load errors. Don't retry auth / not-found.
-            if "queue" not in msg and "too_many_requests" not in msg and "overloaded" not in msg:
-                raise
-    if last_err is not None:
-        raise last_err
-    latency = int((time.time() - t0) * 1000)
-
-    text = resp.choices[0].message.content or ""
-    usage = resp.usage
-    in_tok  = getattr(usage, "prompt_tokens", 0) or 0
-    out_tok = getattr(usage, "completion_tokens", 0) or 0
-    return LLMResult(
-        text=text, model=model, provider="cerebras",
-        input_tokens=in_tok, output_tokens=out_tok,
-        cost_usd=0.0,  # Cerebras free tier
-        latency_ms=latency,
-    )
+_FENCE_RE = re.compile(r"^\s*```(?:json)?\s*|\s*```\s*$", re.IGNORECASE)
 
 
-# ────────────── Groq ──────────────
+def _coerce_json_text(text: str) -> str:
+    """Strip markdown fencing / prose so `json.loads` succeeds.
 
-def _call_groq(
-    model: str,
-    system: str,
-    user: str,
-    max_tokens: int,
-    temperature: float,
-    json_mode: bool,
-) -> LLMResult:
-    from groq import Groq
-    client = Groq(api_key=GROQ_API_KEY)
-
-    kwargs: dict[str, Any] = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        "temperature": temperature,
-        "max_tokens": max_tokens,
-    }
-    if json_mode:
-        kwargs["response_format"] = {"type": "json_object"}
-
-    t0 = time.time()
-    resp = client.chat.completions.create(**kwargs)
-    latency = int((time.time() - t0) * 1000)
-
-    text = resp.choices[0].message.content or ""
-    usage = resp.usage
-    in_tok  = getattr(usage, "prompt_tokens", 0) or 0
-    out_tok = getattr(usage, "completion_tokens", 0) or 0
-    return LLMResult(
-        text=text, model=model, provider="groq",
-        input_tokens=in_tok, output_tokens=out_tok,
-        cost_usd=0.0,  # Groq free tier
-        latency_ms=latency,
-    )
+    Anthropic has no `response_format=json_object` equivalent, so Claude
+    routinely wraps JSON in a ```json fence even when the prompt forbids it.
+    Callers that json.loads() the raw text would fail on every response, so we
+    normalise here rather than in each agent.
+    """
+    t = _FENCE_RE.sub("", text.strip())
+    if t.startswith("{"):
+        return t
+    start, end = t.find("{"), t.rfind("}")
+    return t[start:end + 1] if start != -1 and end > start else t
 
 
 # ────────────── Public router ──────────────
@@ -292,75 +196,59 @@ def call_llm(
     json_mode: bool = False,
     max_tokens: int = 1200,
     temperature: float = 0.0,
-    prefer: str = "paid",        # "paid" (Claude if budget) or "free" (Groq)
     cache_system: bool = True,
 ) -> LLMResult:
-    """Route an LLM call with budget enforcement + logging.
+    """Run an LLM call with budget enforcement + logging.
 
-    Routing cascade for agent='synthesis' (tries each in order, falls back on failure):
-      1. Claude Haiku 4.5 — if ANTHROPIC_API_KEY set AND today's spend ≤ DAILY_USD_BUDGET
-      2. Cerebras Qwen 3 235B — if CEREBRAS_API_KEY set (free, 10× Groq quota)
-      3. Groq gpt-oss-120b — always (free, small daily quota)
+    Every agent runs on Claude. `agent` selects the token ceiling, not the
+    provider: synthesis reasons over the full evidence bundle, while the
+    orchestrator and verifier do cheap structured work.
 
-    agent='verifier' or 'orchestrator' → always routes to the small free Groq model.
+    Raises BudgetExceededError when today's spend has reached DAILY_USD_BUDGET,
+    and RuntimeError when no API key is configured. Both are surfaced to the
+    caller rather than silently degrading the answer.
     """
-    # Force free path for low-stakes agents regardless of 'prefer'.
-    if agent in ("orchestrator", "verifier"):
-        prefer = "free"
+    if not ANTHROPIC_API_KEY:
+        raise RuntimeError(
+            "ANTHROPIC_API_KEY is not set. Add it to .env locally, or to the "
+            "app's secrets when deployed."
+        )
 
-    # Step 1: try Claude if paid is preferred and budget allows.
-    use_paid = (
-        prefer == "paid"
-        and ANTHROPIC_API_KEY
-        and DAILY_USD_BUDGET > 0
-        and _spend_today() < DAILY_USD_BUDGET
-    )
-    _debug(f"routing agent={agent} prefer={prefer} use_paid={use_paid} spend={_spend_today():.4f}")
-    if use_paid:
-        try:
-            _debug(f"attempting Anthropic {SYNTHESIS_PRIMARY_MODEL}")
-            r = _call_anthropic(
-                SYNTHESIS_PRIMARY_MODEL, system, user,
-                max_tokens=max_tokens, temperature=temperature,
-                use_cache=cache_system,
-            )
-            _log("anthropic", SYNTHESIS_PRIMARY_MODEL, agent, r)
-            _debug(f"Anthropic OK in={r.input_tokens} out={r.output_tokens} cost=${r.cost_usd:.4f}")
-            if _spend_today() > DAILY_USD_BUDGET:
-                r.text = r.text + f"\n\n[note: daily USD budget (${DAILY_USD_BUDGET}) reached, subsequent synthesis calls will use a free provider]"
-            return r
-        except Exception as e:
-            _debug(f"Anthropic failed: {type(e).__name__}: {e}")
-            _log("anthropic", SYNTHESIS_PRIMARY_MODEL, agent,
-                 LLMResult("", SYNTHESIS_PRIMARY_MODEL, "anthropic", 0, 0),
-                 note=f"failed, cascading: {type(e).__name__}")
+    spend = _spend_today()
+    if DAILY_USD_BUDGET <= 0 or spend >= DAILY_USD_BUDGET:
+        raise BudgetExceededError(
+            f"Daily budget of ${DAILY_USD_BUDGET:.2f} reached (spent ${spend:.4f}). "
+            "Raise DAILY_USD_BUDGET or wait for the counter to reset at midnight UTC."
+        )
 
-    # Step 2: try Cerebras if configured (free, big quota).
-    if agent == "synthesis" and CEREBRAS_API_KEY:
-        try:
-            _debug(f"attempting Cerebras {SYNTHESIS_CEREBRAS_MODEL}")
-            r = _call_cerebras(
-                SYNTHESIS_CEREBRAS_MODEL, system, user,
-                max_tokens=max_tokens, temperature=temperature, json_mode=json_mode,
-            )
-            _log("cerebras", SYNTHESIS_CEREBRAS_MODEL, agent, r, note="free-tier")
-            _debug(f"Cerebras OK in={r.input_tokens} out={r.output_tokens}")
-            return r
-        except Exception as e:
-            _debug(f"Cerebras failed: {type(e).__name__}: {e}")
-            _log("cerebras", SYNTHESIS_CEREBRAS_MODEL, agent,
-                 LLMResult("", SYNTHESIS_CEREBRAS_MODEL, "cerebras", 0, 0),
-                 note=f"failed, cascading: {type(e).__name__}")
+    model = SYNTHESIS_PRIMARY_MODEL if agent == "synthesis" else FAST_MODEL
+    _debug(f"routing agent={agent} model={model} spend={spend:.4f}")
 
-    # Step 3: Groq (always free, small quota).
-    free_model = SYNTHESIS_GROQ_MODEL if agent == "synthesis" else GROQ_FAST_MODEL
-    _debug(f"attempting Groq {free_model}")
-    r = _call_groq(
-        free_model, system, user,
-        max_tokens=max_tokens, temperature=temperature, json_mode=json_mode,
-    )
-    _log("groq", free_model, agent, r, note="free-tier")
-    _debug(f"Groq OK in={r.input_tokens} out={r.output_tokens}")
+    try:
+        r = _call_anthropic(
+            model, system, user,
+            max_tokens=max_tokens, temperature=temperature,
+            use_cache=cache_system,
+        )
+    except Exception as e:
+        # Log the failure so a bad key or a retired model id shows up in
+        # `scripts.usage` instead of only in a traceback.
+        _log("anthropic", model, agent,
+             LLMResult("", model, "anthropic", 0, 0),
+             note=f"failed: {type(e).__name__}")
+        _debug(f"Anthropic failed: {type(e).__name__}: {e}")
+        raise
+
+    if json_mode:
+        r.text = _coerce_json_text(r.text)
+
+    # A logging failure must not discard a call that already succeeded and cost money.
+    try:
+        _log("anthropic", model, agent, r)
+    except Exception as e:
+        _debug(f"usage logging failed (call still succeeded): {type(e).__name__}: {e}")
+
+    _debug(f"Anthropic OK in={r.input_tokens} out={r.output_tokens} cost=${r.cost_usd:.4f}")
     return r
 
 

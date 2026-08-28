@@ -93,8 +93,8 @@ def _print_confusion(results: list[dict]) -> str:
 def main():
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pace", type=float, default=13.0,
-                    help="Seconds between cases. 13s respects Cerebras 5 req/min limit.")
+    ap.add_argument("--pace", type=float, default=1.0,
+                    help="Seconds between cases, to stay clear of provider rate limits.")
     ap.add_argument("--checkpoint", type=str,
                     default=str(Path(__file__).resolve().parents[1] / "benchmark" / "progress.json"),
                     help="Checkpoint file; resumes from here if interrupted.")
@@ -141,7 +141,7 @@ def main():
         # Save checkpoint after each case so we can resume if interrupted.
         checkpoint_path.write_text(json.dumps(results, indent=2, default=str))
 
-        # Pace to respect Cerebras 5 req/min free-tier limit.
+        # Small gap between cases to stay clear of provider rate limits.
         if i < len(labels):
             import time as _t
             _t.sleep(args.pace)

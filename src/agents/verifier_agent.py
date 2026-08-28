@@ -1,8 +1,8 @@
 """Verifier agent: runs AFTER synthesis. Uses the numeric validator + a second
-Groq call to catch and rewrite any hallucinated numbers in the explanation.
+LLM call to catch and rewrite any hallucinated numbers in the explanation.
 
 If the validator finds zero unverified claims, the verifier returns the draft
-unchanged but annotated with 'validation_ok: true'. Otherwise it asks Groq to
+unchanged but annotated with 'validation_ok: true'. Otherwise it asks the model to
 rewrite, citing the flagged numbers explicitly.
 """
 from __future__ import annotations
@@ -56,7 +56,7 @@ using only numbers that actually appear in the source context above.
     r = call_llm(
         system=VERIFIER_SYSTEM,
         user=user_msg,
-        agent="verifier",           # forced to the small free Groq model by the router
+        agent="verifier",           # routed to the fast model by call_llm
         json_mode=True,
         max_tokens=1200,
         temperature=0.0,

@@ -13,40 +13,29 @@ CHROMA_DIR.mkdir(exist_ok=True)
 
 DUCKDB_PATH = DATA_DIR / "market.duckdb"
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 FRED_API_KEY = os.getenv("FRED_API_KEY", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-CEREBRAS_API_KEY = os.getenv("CEREBRAS_API_KEY", "")
 
-# Hard daily spend cap for paid APIs (USD). Enforced in src/agents/llm_client.py.
-# Set to 0.0 to disable paid calls entirely (forces free Groq fallback).
+# Hard daily spend cap (USD). Enforced in src/agents/llm_client.py: a call that
+# would cross the cap raises BudgetExceededError instead of spending.
 try:
     DAILY_USD_BUDGET = float(os.getenv("DAILY_USD_BUDGET", "1.00"))
 except ValueError:
     DAILY_USD_BUDGET = 1.00
 
 # --- Model routing ---
-# Synthesis routing order (first available wins):
-#   1. Claude Haiku 4.5     (Anthropic, paid, best quality) — if ANTHROPIC_API_KEY set AND budget ok
-#   2. Cerebras Qwen 3 235B (free, 10x Groq quota)         — if CEREBRAS_API_KEY set
-#   3. Groq gpt-oss-120b    (free, small quota)             — always available if GROQ_API_KEY set
-SYNTHESIS_PRIMARY_MODEL     = "claude-haiku-4-5-20251001"
-# Cerebras free-tier accessible model (2026-Q2): Alibaba's Qwen 3 235B MoE
-# (22B active params). Claude-tier quality, supports JSON mode, occasional
-# queue_exceeded under load — handled by retry in llm_client._call_cerebras.
-SYNTHESIS_CEREBRAS_MODEL    = "qwen-3-235b-a22b-instruct-2507"
-SYNTHESIS_GROQ_MODEL        = "openai/gpt-oss-120b"
-# Back-compat alias used by older code paths.
-SYNTHESIS_FALLBACK_MODEL    = SYNTHESIS_GROQ_MODEL
-
-# Orchestrator + verifier: the small free Groq model — cheap, fast, and we
-# already route via this model so we stay under free-tier quotas.
+# Every agent runs on Claude. The free-tier providers this project used to
+# cascade to were retired by their vendors, and the replacements offered are
+# reasoning models whose chain-of-thought overruns the completion budget and
+# truncates the JSON these agents require. A fallback that reliably returns a
+# 400 is worse than no fallback, so the cascade was removed rather than left
+# in place looking like resilience.
 #
-# Both support JSON mode, which the orchestrator and verifier depend on.
-# Check `client.models.list()` before changing these — providers retire model
-# ids, and a stale one fails at call time rather than at import.
-GROQ_MODEL      = "openai/gpt-oss-120b"   # kept for backward compat
-GROQ_FAST_MODEL = "openai/gpt-oss-20b"
+# Synthesis reasons over the full evidence bundle and gets the larger budget.
+# The orchestrator parses a query into JSON and the verifier rewrites a draft;
+# both are cheap, so they share the same model with a smaller token ceiling.
+SYNTHESIS_PRIMARY_MODEL = "claude-haiku-4-5-20251001"
+FAST_MODEL              = "claude-haiku-4-5-20251001"
 
 # Watchlist covers Nifty 100 (Nifty 50 plus Nifty Next 50).
 # yfinance uses the .NS suffix for NSE symbols.

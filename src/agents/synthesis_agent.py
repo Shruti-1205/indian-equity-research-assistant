@@ -148,7 +148,6 @@ def synthesis_agent(state: AgentState) -> dict:
         json_mode=True,
         max_tokens=1200,
         temperature=0.1,
-        prefer="paid",
         cache_system=True,
     )
     raw = r.text

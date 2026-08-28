@@ -1,6 +1,6 @@
 """Orchestrator: parses the user's free-text query into structured task fields.
 
-Uses Groq (fast, cheap) with a strict JSON-output prompt. Deterministic
+Uses Claude Haiku with a strict JSON-output prompt. Deterministic
 fast-path for queries that already look structured (e.g. "EICHERMOT.NS 2026-04-13").
 """
 from __future__ import annotations
@@ -9,7 +9,7 @@ import json
 import re
 from datetime import date, datetime, timedelta
 
-from config import COMPANY_NAMES, GROQ_API_KEY
+from config import ANTHROPIC_API_KEY, COMPANY_NAMES
 from src.agents.llm_client import call_llm
 from src.agents.prompts import ORCHESTRATOR_SYSTEM
 from src.data.bse_codes import NSE_TO_BSE
@@ -91,7 +91,7 @@ def orchestrate(user_query: str) -> dict:
     if fast is not None:
         return fast
 
-    if not GROQ_API_KEY:
+    if not ANTHROPIC_API_KEY:
         # Degraded fallback: try to detect a ticker in raw text.
         for sym in VALID_SYMBOLS:
             bare = sym.replace(".NS", "")
@@ -107,7 +107,7 @@ def orchestrate(user_query: str) -> dict:
     r = call_llm(
         system=system,
         user=user_query,
-        agent="orchestrator",       # forced to the small free Groq model by the router
+        agent="orchestrator",       # routed to the fast model by call_llm
         json_mode=True,
         max_tokens=200,
         temperature=0.0,

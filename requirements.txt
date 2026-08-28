@@ -17,10 +17,7 @@ sentence-transformers==3.3.1
 # --- Agents / LLM ---
 langgraph==0.2.60
 langchain==0.3.13
-langchain-groq==0.2.2
-groq==0.13.1
 anthropic>=0.40.0
-openai>=1.55.0     # used for Cerebras (OpenAI-compatible API)
 
 # --- API + dashboard ---
 fastapi==0.115.6

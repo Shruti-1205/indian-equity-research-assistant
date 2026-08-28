@@ -34,25 +34,19 @@ jobs:
 
       - name: Refresh price data
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m scripts.bootstrap
 
       - name: Refresh BSE announcements
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m scripts.build_rag
 
       - name: Refresh FRED macro and NSE FII/DII
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          CEREBRAS_API_KEY: ${{ secrets.CEREBRAS_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python -m scripts.refresh_macro
 
